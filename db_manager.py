@@ -23,6 +23,19 @@ class DatabaseManager:
         except mysql.connector.Error as err:
             print(f"Error: {err}")
 
+        #insert access data in access      
+    def insert_access_data(self, user_id, access_time, direction, gate_id):
+        try:
+            query = """
+            INSERT INTO access (user_id, access_time, direction, gate_id)
+            VALUES (%s, %s, %s, %s);
+            """
+            self.cursor.execute(query, (user_id, access_time, direction, gate_id))
+            self.conn.commit()
+            print(f"Access data for user {user_id} inserted successfully.")
+        except mysql.connector.Error as err:
+            print(f"Error: {err}")
+
     def __del__(self):
         # Close the connection when the object is deleted
         if self.conn.is_connected():
