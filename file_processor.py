@@ -24,11 +24,11 @@ def add_access():
             direction=data['sens'],
             gate_id=data['idPoarta']
         )
-        print("Data successfully inserted into the database.")  # Debug: print success message
+        print("Data successfully inserted into the database.")  # Debug
 
         return jsonify({"status": "success"}), 201
     except Exception as e:
-        print(f"Error occurred: {e}")  # Debug: print error message
+        print(f"Error occurred: {e}")  # Debug
         return jsonify({"status": "error", "message": str(e)}), 400
 
 if __name__ == "__main__":

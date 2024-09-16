@@ -9,5 +9,5 @@ db_manager = DatabaseManager(
 )
 
 # Register users
-db_manager.register_user("John", "Doe", "Acme Corp", 1)
-db_manager.register_user("Jane", "Smith", "Beta Ltd", 2)
+db_manager.register_user("Popica", "Popescu", "firma cu proiectu", 1)
+# db_manager.register_user("Vlad", "Oncica", "firma cu proiectu", 1)
