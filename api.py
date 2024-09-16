@@ -11,25 +11,21 @@ db_manager = DatabaseManager(
     database="sistem_monitorizare"  
 )
 
+# Define a POST route
 @app.route('/api/access', methods=['POST'])
 def add_access():
     try:
-        data = request.json  # Get JSON data from the request
-        print(f"Received JSON: {data}")  # Debug: print received JSON data
-
-        # Insert data into the database
+        data = request.json  
         db_manager.insert_access_data(
             user_id=data['idPersoana'],
             access_time=data['data'],
             direction=data['sens'],
             gate_id=data['idPoarta']
         )
-        print("Data successfully inserted into the database.")  # Debug: print success message
-
         return jsonify({"status": "success"}), 201
     except Exception as e:
-        print(f"Error occurred: {e}")  # Debug: print error message
         return jsonify({"status": "error", "message": str(e)}), 400
 
 if __name__ == "__main__":
     app.run(debug=True)
+
