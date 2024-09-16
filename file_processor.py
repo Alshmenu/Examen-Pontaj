@@ -1,35 +1,43 @@
-from flask import Flask, request, jsonify
+import os
+import shutil
+import csv
 from db_manager import DatabaseManager
 
-app = Flask(__name__)
+def process_csv_files(db_manager, intrari_folder='intrari', backup_folder='backup_intrari'):
+    
+    if not os.path.exists(backup_folder):
+        os.makedirs(backup_folder)
 
-# Initialize the database manager
-db_manager = DatabaseManager(
-    host="localhost",
-    user="root",
-    password="19iul2005",  
-    database="sistem_monitorizare"  
-)
+   
+    for file_name in os.listdir(intrari_folder):
+        if file_name.endswith('.csv'): 
+            file_path = os.path.join(intrari_folder, file_name)
+            try:
+                with open(file_path, mode='r') as file:
+                    reader = csv.reader(file)
+                    next(reader)  # Skip the header row
+                    for row in reader:
+                        user_id, access_time, direction, gate_id = row
+                        db_manager.insert_access_data(user_id, access_time, direction, gate_id)
+                print(f"Processed file: {file_name}")
 
-@app.route('/api/access', methods=['POST'])
-def add_access():
-    try:
-        data = request.json  # Get JSON data from the request
-        print(f"Received JSON: {data}")  # Debug: print received JSON data
+                
+                shutil.move(file_path, os.path.join(backup_folder, file_name))
 
-        # Insert data into the database
-        db_manager.insert_access_data(
-            user_id=data['idPersoana'],
-            access_time=data['data'],
-            direction=data['sens'],
-            gate_id=data['idPoarta']
-        )
-        print("Data successfully inserted into the database.")  # Debug
-
-        return jsonify({"status": "success"}), 201
-    except Exception as e:
-        print(f"Error occurred: {e}")  # Debug
-        return jsonify({"status": "error", "message": str(e)}), 400
+            except Exception as e:
+                print(f"Error processing file {file_name}: {e}")
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Initialize the DatabaseManager object
+    db_manager = DatabaseManager(
+        host="localhost",
+        user="root",
+        password="19iul2005",  
+        database="sistem_monitorizare"  
+    )
+
+    
+    process_csv_files(db_manager)
+
+    
+    db_manager.close()
